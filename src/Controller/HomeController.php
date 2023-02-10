@@ -10,18 +10,14 @@ class HomeController
 
 
     public function home(
-        RequestInterface $request,
         ResponseInterface $response,
-        array $args
     ) {
         $response->getBody()->write("<h1>Hello</h1>");
         return $response;
     }
 
     public function person(
-        RequestInterface $request,
         ResponseInterface $response,
-        array $args
     ) {
         $response->getBody()->write(json_encode([
             "name" => "Bohr", "firstName" => "Niels", "profession" => "Physicien"
@@ -31,7 +27,6 @@ class HomeController
     }
 
     public function hello(
-        RequestInterface $request,
         ResponseInterface $response,
         array $args
     ) {
