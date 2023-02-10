@@ -165,9 +165,12 @@ abstract class AbstractDAO
         return $snake;
     }
 
-    public function hydrate(array $data)
+    public function hydrate(array $data, EntityInterface $entity = null)
     {
-        $entity = new $this->entityClassName();
+        if (!isset($entity)) {
+            $entity = new $this->entityClassName();
+        }
+
         foreach ($data as $key => $value) {
             $methodName = "set" . $this->snakeToCamelCase($key);
             if (method_exists($entity, $methodName)) {

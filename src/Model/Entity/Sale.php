@@ -9,10 +9,10 @@ class Sale implements EntityInterface
 {
 
     private ?int $id = null;
-    private int $vendeurId;
-    private int $departementId;
-    private float $montant;
-    private DateTime $dateVente;
+    private ?int $vendeurId = null;
+    private ?int $departementId = null;
+    private ?float $montant = null;
+    private ?DateTime $dateVente = null;
 
 
 

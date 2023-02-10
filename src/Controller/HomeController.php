@@ -70,8 +70,42 @@ class HomeController
 
         $dao = $this->container->get("dao.sale");
         $postedData = $request->getParsedBody();
-        //$postedData["date_vente"] = new DateTime($postedData["date_vente"]);
         $sale = $dao->hydrate($postedData);
+        $dao->save($sale);
+
+        $response->getBody()->write(json_encode(
+            [
+                "success" => true,
+                "data" => serialize($sale)
+            ]
+        ));
+        return $response->withHeader("Content-Type", "application/json");
+    }
+
+
+    public function deleteSaleById(int $id, ResponseInterface $response)
+    {
+        $dao = $this->container->get("dao.sale");
+        $dao->deleteOneById($id);
+        $response->getBody()->write(json_encode(
+            [
+                "success" => true
+            ]
+        ));
+        return $response->withHeader("Content-Type", "application/json");
+    }
+
+    public function updateSale(
+        int $id,
+        ResponseInterface $response,
+        ServerRequestInterface $request
+    ) {
+        $dao = $this->container->get("dao.sale");
+
+        $postedData = $request->getParsedBody();
+        $sale = $dao->findOneById($id)->getOneAsObject();
+        $sale = $dao->hydrate($postedData, $sale);
+
         $dao->save($sale);
 
         $response->getBody()->write(json_encode(
