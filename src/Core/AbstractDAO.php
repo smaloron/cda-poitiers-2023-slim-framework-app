@@ -79,6 +79,7 @@ abstract class AbstractDAO
         $sql = "SELECT * FROM `{$this->tableName}` WHERE id=?";
         $this->statement = $this->pdo->prepare($sql);
         $this->statement->execute([$id]);
+
         return $this;
     }
 

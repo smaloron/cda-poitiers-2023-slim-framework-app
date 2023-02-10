@@ -26,7 +26,7 @@ $container->set("pdo", function (ContainerInterface $c) {
 });
 
 $container->set("dao.sale", function (ContainerInterface $c) {
-    return new SaleDAO($c->get('pdo'), "ventes", Sale::class);
+    return new SaleDAO($c->get('pdo'));
 });
 
 $app = Bridge::create($container);
