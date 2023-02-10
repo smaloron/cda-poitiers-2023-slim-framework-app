@@ -11,8 +11,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
+use RedBeanPHP\R;
+use Seb\App\Controller\RedBeanController;
 
 require "../vendor/autoload.php";
+
+R::setup(
+    "mysql:host=localhost;dbname=formation_sql;charset=utf8",
+    "root",
+    ""
+);
 
 $container = new Container; //(new ContainerBuilder())->build();
 
@@ -52,6 +60,8 @@ $app->get("/vente/{id:\d+}", [HomeController::class, "saleById"]);
 $app->post("/vente", [HomeController::class, "newSale"]);
 $app->delete("/vente/{id:\d+}", [HomeController::class, "deleteSaleById"]);
 $app->post("/vente/{id:\d+}", [HomeController::class, "updateSale"]);
+
+$app->get("/book", [RedBeanController::class, "index"]);
 
 
 $app->run();
