@@ -9,14 +9,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Factory\Psr17\ServerRequestCreator;
 
-class HomeController
+class HomeController extends AbstractController
 {
-
-    public function __construct(private ContainerInterface $container)
-    {
-    }
-
-
     public function home(
         ResponseInterface $response,
     ) {
@@ -27,11 +21,10 @@ class HomeController
     public function person(
         ResponseInterface $response,
     ) {
-        $response->getBody()->write(json_encode([
+        $data = [
             "name" => "Bohr", "firstName" => "Niels", "profession" => "Physicien"
-        ]));
-        return $response->withHeader("Content-Type", "application/json")
-            ->withStatus(200);
+        ];
+        return $this->jsonResponse($data, $response);
     }
 
     public function hello(
@@ -49,8 +42,8 @@ class HomeController
         ResponseInterface $response
     ) {
         $data = $this->container->get('dao.sale')->findAll([], ["limit" => 10])->getAllAsArray();
-        $response->getBody()->write(json_encode($data));
-        return $response->withHeader("Content-Type", "application/json");
+
+        return $this->jsonResponse($data, $response);
     }
 
     public function saleById(ResponseInterface $response, int $id)
@@ -59,8 +52,7 @@ class HomeController
             ->get('dao.sale')
             ->findOneById($id)->getOneAsArray();
 
-        $response->getBody()->write(json_encode($sale));
-        return $response->withHeader("Content-Type", "application/json");
+        return $this->jsonResponse($sale, $response);
     }
 
     public function newSale(
