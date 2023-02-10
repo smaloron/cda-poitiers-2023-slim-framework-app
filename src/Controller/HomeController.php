@@ -2,9 +2,12 @@
 
 namespace Seb\App\Controller;
 
+use DateTime;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Factory\Psr17\ServerRequestCreator;
 
 class HomeController
 {
@@ -57,6 +60,26 @@ class HomeController
             ->findOneById($id)->getOneAsArray();
 
         $response->getBody()->write(json_encode($sale));
+        return $response->withHeader("Content-Type", "application/json");
+    }
+
+    public function newSale(
+        ResponseInterface $response,
+        ServerRequestInterface $request
+    ) {
+
+        $dao = $this->container->get("dao.sale");
+        $postedData = $request->getParsedBody();
+        //$postedData["date_vente"] = new DateTime($postedData["date_vente"]);
+        $sale = $dao->hydrate($postedData);
+        $dao->save($sale);
+
+        $response->getBody()->write(json_encode(
+            [
+                "success" => true,
+                "data" => serialize($sale)
+            ]
+        ));
         return $response->withHeader("Content-Type", "application/json");
     }
 }

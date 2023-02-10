@@ -2,6 +2,7 @@
 
 namespace Seb\App\Core;
 
+use DateTime;
 use PDO;
 use PDOStatement;
 
@@ -228,6 +229,9 @@ abstract class AbstractDAO
             $methodName = "get" . ucfirst($propertyName);
             if (method_exists($entity, $methodName)) {
                 $data[$item] = $entity->$methodName();
+                if ($data[$item] instanceof DateTime) {
+                    $data[$item] = $data[$item]->format("Y-m-d");
+                }
             } else {
                 if (str_ends_with($item, "_id")) {
                     $methodName = substr($methodName, 0, strlen($methodName) - 2);

@@ -8,7 +8,7 @@ use Seb\App\Core\EntityInterface;
 class Sale implements EntityInterface
 {
 
-    private int $id;
+    private ?int $id = null;
     private int $vendeurId;
     private int $departementId;
     private float $montant;
@@ -19,7 +19,7 @@ class Sale implements EntityInterface
     /**
      * Get the value of id
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -111,6 +111,9 @@ class Sale implements EntityInterface
      */
     public function setDateVente($dateVente)
     {
+        if (!$dateVente instanceof DateTime) {
+            $dateVente = new DateTime($dateVente);
+        }
         $this->dateVente = $dateVente;
 
         return $this;
