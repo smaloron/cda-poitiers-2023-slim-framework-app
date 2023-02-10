@@ -8,6 +8,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Seb\App\Controller\HomeController;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
 
@@ -31,13 +32,21 @@ $container->set("dao.sale", function (ContainerInterface $c) {
 
 $app = Bridge::create($container);
 
-
-
-
+$app->add(
+    function (RequestInterface $request, RequestHandlerInterface $handler) {
+        $response = $handler->handle($request);
+        return $response
+            ->withHeader("Access-Control-Allow-Origin", "*")
+            ->withHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+            ->withHeader("Access-Control-Allow-Headers", "Content-Type, Accept,  Origin, Authorization");
+    }
+);
 
 $app->get("/home", [HomeController::class, "home"]);
 $app->get("/person", [HomeController::class, "person"]);
 $app->get("/hello/{name}[/[{age:\d+}]]", [HomeController::class, "hello"]);
+
+
 $app->get("/vente", [HomeController::class, "testDAO"]);
 $app->get("/vente/{id:\d+}", [HomeController::class, "saleById"]);
 $app->post("/vente", [HomeController::class, "newSale"]);
