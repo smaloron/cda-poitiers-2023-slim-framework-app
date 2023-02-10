@@ -8,5 +8,10 @@
     },
     "scripts": {
         "start": "php -S localhost:8000 -t public"
+    },
+    "autoload": {
+        "psr-4": {
+            "Seb\\App\\": "src/"
+        }
     }
 }
