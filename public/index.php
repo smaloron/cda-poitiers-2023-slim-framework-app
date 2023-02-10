@@ -38,5 +38,8 @@ $app = Bridge::create($container);
 $app->get("/home", [HomeController::class, "home"]);
 $app->get("/person", [HomeController::class, "person"]);
 $app->get("/hello/{name}[/[{age:\d+}]]", [HomeController::class, "hello"]);
+$app->get("/vente", [HomeController::class, "testDAO"]);
+$app->get("/vente/{id:\d+}", [HomeController::class, "saleById"]);
+
 
 $app->run();

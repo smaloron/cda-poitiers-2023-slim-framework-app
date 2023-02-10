@@ -12,4 +12,12 @@ class SaleDAO extends AbstractDAO
     {
         parent::__construct($pdo, "ventes", Sale::class);
     }
+
+    public function findOneById(int $id): self
+    {
+        $sql = "SELECT * FROM `{$this->tableName}` WHERE vente_id=?";
+        $this->statement = $this->pdo->prepare($sql);
+        $this->statement->execute([$id]);
+        return $this;
+    }
 }
