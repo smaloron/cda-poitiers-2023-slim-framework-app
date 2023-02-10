@@ -1,0 +1,12 @@
+{
+    "require": {
+        "slim/slim": "^4.11",
+        "slim/psr7": "^1.6"
+    },
+    "config": {
+        "process-timeout": 0
+    },
+    "scripts": {
+        "start": "php -S localhost:8000 -t public"
+    }
+}
