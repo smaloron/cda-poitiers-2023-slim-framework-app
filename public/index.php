@@ -13,6 +13,7 @@ use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
 use RedBeanPHP\R;
 use Seb\App\Controller\RedBeanController;
+use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Psr7\Response;
 
@@ -41,6 +42,14 @@ $container->set("dao.sale", function (ContainerInterface $c) {
 });
 
 $app = Bridge::create($container);
+
+// Ajout d'un attribut
+$app->add(
+    function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
+        $request = $request->withAttribute("copyright", "Moi & Moi");
+        return $handler->handle($request);
+    }
+);
 
 $app->add(
     function (ServerRequestInterface $request, RequestHandlerInterface $handler) {

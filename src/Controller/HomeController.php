@@ -46,13 +46,21 @@ class HomeController extends AbstractController
         return $this->jsonResponse($data, $response);
     }
 
-    public function saleById(ResponseInterface $response, int $id)
-    {
+    public function saleById(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        int $id
+    ) {
         $sale = $this->container
             ->get('dao.sale')
             ->findOneById($id)->getOneAsArray();
 
-        return $this->jsonResponse($sale, $response);
+        $data = [
+            "sale" => $sale,
+            "copyright" => $request->getAttribute("copyright", null)
+        ];
+
+        return $this->jsonResponse($data, $response);
     }
 
     public function newSale(
