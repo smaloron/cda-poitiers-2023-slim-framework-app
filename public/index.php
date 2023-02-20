@@ -1,32 +1,40 @@
 <?php
 
 use DI\Container;
+use RedBeanPHP\R;
+use Dotenv\Dotenv;
+use Slim\Psr7\Response;
 use DI\ContainerBuilder;
 use DI\Bridge\Slim\Bridge;
 use Slim\Factory\AppFactory;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Seb\App\Controller\HomeController;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
-use RedBeanPHP\R;
-use Seb\App\Controller\JwtController;
-use Seb\App\Controller\RedBeanController;
-use Seb\App\Middleware\PersonMiddleware;
 use Seb\App\Model\DAO\PersonDAO;
+use Psr\Container\ContainerInterface;
+use Seb\App\Controller\JwtController;
+use Seb\App\Controller\HomeController;
+use Psr\Http\Message\ResponseInterface;
+use Seb\App\Middleware\PersonMiddleware;
+use Seb\App\Controller\RedBeanController;
+use Tuupola\Middleware\JwtAuthentication;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Interfaces\RouteCollectorProxyInterface;
-use Slim\Psr7\Response;
-use Tuupola\Middleware\JwtAuthentication;
 
 require "../vendor/autoload.php";
 
+// Chargement des variables d'environement dotenv
+
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
+
+
 R::setup(
-    "mysql:host=localhost;dbname=formation_sql;charset=utf8",
-    "root",
-    ""
+    $_ENV["DSN"],
+    $_ENV["DB_USER"],
+    $_ENV["DB_PASS"]
 );
 
 $container = new Container; //(new ContainerBuilder())->build();
@@ -34,9 +42,9 @@ $container = new Container; //(new ContainerBuilder())->build();
 
 $container->set("pdo", function (ContainerInterface $c) {
     return new PDO(
-        "mysql:host=localhost;dbname=formation_sql;charset=utf8",
-        "root",
-        "",
+        $_ENV["DSN"],
+        $_ENV["DB_USER"],
+        $_ENV["DB_PASS"],
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 });
@@ -109,7 +117,9 @@ $app->get("/book", [RedBeanController::class, "index"])
 
 $app->get("/jwt/get-token", [JwtController::class, "getToken"]);
 $app->get("/jwt/secure", [JwtController::class, "secureSpace"])
-    ->add(new JwtAuthentication(["secret" => "123"]));
+    ->add(new JwtAuthentication([
+        "secret" => $_ENV["JWT_SECRET"]
+    ]));
 
 
 $app->run();

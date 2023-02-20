@@ -18,7 +18,7 @@ class JwtController extends AbstractController
             "user" => ["userName" => "toto", "role" => "admin"]
         ];
 
-        $token = JWT::encode($data, "123");
+        $token = JWT::encode($data, $_ENV["JWT_SECRET"]);
 
         return $this->jsonResponse(["token" => $token], $response);
     }
