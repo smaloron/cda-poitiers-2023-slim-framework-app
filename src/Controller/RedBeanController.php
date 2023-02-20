@@ -4,12 +4,13 @@ namespace Seb\App\Controller;
 
 use RedBeanPHP\R;
 use Psr\Http\Message\ResponseInterface;
-
+use Psr\Http\Message\ServerRequestInterface;
+use Seb\App\Model\Entity\Person;
 
 class RedBeanController extends AbstractController
 {
 
-    public function index(ResponseInterface $response)
+    public function index(ResponseInterface $response, ServerRequestInterface $request)
     {
         $book = R::dispense("book");
         $book->title = "Les Misérables";
@@ -18,9 +19,14 @@ class RedBeanController extends AbstractController
 
         R::store($book);
 
+        $newBook = R::find("book", "id=" . $book->id);
+
+        $person = $request->getAttribute("person", []);
+
         return $this->jsonResponse([
             "success" => true,
-            "data" => serialize($book)
+            "data" => $newBook,
+            "person" => $person
         ], $response);
     }
 }

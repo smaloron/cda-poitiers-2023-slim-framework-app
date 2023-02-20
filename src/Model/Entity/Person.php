@@ -11,8 +11,8 @@ class Person implements EntityInterface
     private int $id;
     private string $prenom;
     private string $nom;
-    private DateTime $dateNaissance;
-    private string $nationalite;
+    private ?DateTime $dateNaissance;
+    private ?string $nationalite;
 
     /**
      * Get the value of id
@@ -89,6 +89,10 @@ class Person implements EntityInterface
      */
     public function setDateNaissance($dateNaissance)
     {
+        if (!$dateNaissance instanceof DateTime) {
+            $dateNaissance = new DateTime($dateNaissance);
+        }
+
         $this->dateNaissance = $dateNaissance;
 
         return $this;
@@ -107,7 +111,7 @@ class Person implements EntityInterface
      *
      * @return  self
      */
-    public function setNationalite($nationalite)
+    public function setNationalite(?string $nationalite)
     {
         $this->nationalite = $nationalite;
 

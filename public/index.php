@@ -13,6 +13,8 @@ use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
 use RedBeanPHP\R;
 use Seb\App\Controller\RedBeanController;
+use Seb\App\Middleware\PersonMiddleware;
+use Seb\App\Model\DAO\PersonDAO;
 use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Psr7\Response;
@@ -39,6 +41,10 @@ $container->set("pdo", function (ContainerInterface $c) {
 
 $container->set("dao.sale", function (ContainerInterface $c) {
     return new SaleDAO($c->get('pdo'));
+});
+
+$container->set("dao.person", function (ContainerInterface $c) {
+    return new PersonDAO($c->get("pdo"));
 });
 
 $app = Bridge::create($container);
@@ -86,7 +92,7 @@ $app->get("/person", [HomeController::class, "person"]);
 $app->get("/hello/{name}[/[{age:\d+}]]", [HomeController::class, "hello"]);
 
 $app->group("/vente", function (RouteCollectorProxyInterface $group) {
-    $group->get("", [HomeController::class, "testDAO"])->add("protectWithKey");
+    $group->get("", [HomeController::class, "testDAO"]);
 
     $group->get("/{id:\d+}", [HomeController::class, "saleById"]);
     $group->post("", [HomeController::class, "newSale"]);
@@ -96,7 +102,8 @@ $app->group("/vente", function (RouteCollectorProxyInterface $group) {
 
 
 
-$app->get("/book", [RedBeanController::class, "index"]);
+$app->get("/book", [RedBeanController::class, "index"])
+    ->add(new PersonMiddleware($container));
 
 
 $app->run();
