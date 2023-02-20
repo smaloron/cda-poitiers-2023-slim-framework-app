@@ -13,6 +13,7 @@ use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
 use RedBeanPHP\R;
 use Seb\App\Controller\RedBeanController;
+use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Psr7\Response;
 
 require "../vendor/autoload.php";
@@ -52,35 +53,39 @@ $app->add(
 );
 
 // Middleware pour sécuriser l'API avec une clef
-$app->add(
-    function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
-        // Récupération des données du QueryString 
-        // sous la forme d'un  tableau association
-        $queryData = $request->getQueryParams();
-        // Test de la clef
-        if (isset($queryData["key"]) && $queryData["key"] === "123") {
-            // Réponse constituée par la résolution des appels aux autre middlewares et à la route
-            return $handler->handle($request);
-        }
 
-        // Si pas de clef ou clef incorrecte
-        // On génère notre propre objet Response 
-        $response = new Response(403);
-        $response->getBody()->write(json_encode(["message" => "Accès non autorisé"]));
-        return $response;
+function protectWithKey(ServerRequestInterface $request, RequestHandlerInterface $handler)
+{
+    // Récupération des données du QueryString 
+    // sous la forme d'un  tableau association
+    $queryData = $request->getQueryParams();
+    // Test de la clef
+    if (isset($queryData["key"]) && $queryData["key"] === "123") {
+        // Réponse constituée par la résolution des appels aux autre middlewares et à la route
+        return $handler->handle($request);
     }
-);
+
+    // Si pas de clef ou clef incorrecte
+    // On génère notre propre objet Response 
+    $response = new Response(403);
+    $response->getBody()->write(json_encode(["message" => "Accès non autorisé"]));
+    return $response;
+}
 
 $app->get("/home", [HomeController::class, "home"]);
 $app->get("/person", [HomeController::class, "person"]);
 $app->get("/hello/{name}[/[{age:\d+}]]", [HomeController::class, "hello"]);
 
+$app->group("/vente", function (RouteCollectorProxyInterface $group) {
+    $group->get("", [HomeController::class, "testDAO"])->add("protectWithKey");
 
-$app->get("/vente", [HomeController::class, "testDAO"]);
-$app->get("/vente/{id:\d+}", [HomeController::class, "saleById"]);
-$app->post("/vente", [HomeController::class, "newSale"]);
-$app->delete("/vente/{id:\d+}", [HomeController::class, "deleteSaleById"]);
-$app->post("/vente/{id:\d+}", [HomeController::class, "updateSale"]);
+    $group->get("/{id:\d+}", [HomeController::class, "saleById"]);
+    $group->post("", [HomeController::class, "newSale"]);
+    $group->delete("/{id:\d+}", [HomeController::class, "deleteSaleById"]);
+    $group->post("/{id:\d+}", [HomeController::class, "updateSale"]);
+})->add("protectWithKey");
+
+
 
 $app->get("/book", [RedBeanController::class, "index"]);
 
