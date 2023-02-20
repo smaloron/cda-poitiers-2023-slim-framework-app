@@ -12,12 +12,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
 use RedBeanPHP\R;
+use Seb\App\Controller\JwtController;
 use Seb\App\Controller\RedBeanController;
 use Seb\App\Middleware\PersonMiddleware;
 use Seb\App\Model\DAO\PersonDAO;
 use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Psr7\Response;
+use Tuupola\Middleware\JwtAuthentication;
 
 require "../vendor/autoload.php";
 
@@ -104,6 +106,10 @@ $app->group("/vente", function (RouteCollectorProxyInterface $group) {
 
 $app->get("/book", [RedBeanController::class, "index"])
     ->add(new PersonMiddleware($container));
+
+$app->get("/jwt/get-token", [JwtController::class, "getToken"]);
+$app->get("/jwt/secure", [JwtController::class, "secureSpace"])
+    ->add(new JwtAuthentication(["secret" => "123"]));
 
 
 $app->run();
