@@ -5,7 +5,7 @@ use DI\ContainerBuilder;
 use DI\Bridge\Slim\Bridge;
 use Slim\Factory\AppFactory;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Seb\App\Controller\HomeController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -13,6 +13,7 @@ use Seb\App\Model\DAO\SaleDAO;
 use Seb\App\Model\Entity\Sale;
 use RedBeanPHP\R;
 use Seb\App\Controller\RedBeanController;
+use Slim\Psr7\Response;
 
 require "../vendor/autoload.php";
 
@@ -41,12 +42,32 @@ $container->set("dao.sale", function (ContainerInterface $c) {
 $app = Bridge::create($container);
 
 $app->add(
-    function (RequestInterface $request, RequestHandlerInterface $handler) {
+    function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
         $response = $handler->handle($request);
         return $response
             ->withHeader("Access-Control-Allow-Origin", "*")
             ->withHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
             ->withHeader("Access-Control-Allow-Headers", "Content-Type, Accept,  Origin, Authorization");
+    }
+);
+
+// Middleware pour sécuriser l'API avec une clef
+$app->add(
+    function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
+        // Récupération des données du QueryString 
+        // sous la forme d'un  tableau association
+        $queryData = $request->getQueryParams();
+        // Test de la clef
+        if (isset($queryData["key"]) && $queryData["key"] === "123") {
+            // Réponse constituée par la résolution des appels aux autre middlewares et à la route
+            return $handler->handle($request);
+        }
+
+        // Si pas de clef ou clef incorrecte
+        // On génère notre propre objet Response 
+        $response = new Response(403);
+        $response->getBody()->write(json_encode(["message" => "Accès non autorisé"]));
+        return $response;
     }
 );
 
