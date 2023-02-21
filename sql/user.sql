@@ -1,0 +1,9 @@
+-- Active: 1633595562494@@127.0.0.1@3306@formation_sql
+CREATE TABLE IF NOT EXISTS users (
+    id INT UNSIGNED AUTO_INCREMENT,
+    email VARCHAR(30) NOT NULL UNIQUE,
+    user_name VARCHAR(30) NOT NULL,
+    user_pass VARCHAR(128) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    PRIMARY KEY (id)
+);
