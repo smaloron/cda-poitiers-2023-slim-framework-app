@@ -8,6 +8,7 @@ use DI\ContainerBuilder;
 use DI\Bridge\Slim\Bridge;
 use Slim\Factory\AppFactory;
 use Seb\App\Model\DAO\SaleDAO;
+use Seb\App\Model\DAO\UserDAO;
 use Seb\App\Model\Entity\Sale;
 use Seb\App\Model\DAO\PersonDAO;
 use Psr\Container\ContainerInterface;
@@ -17,6 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use Seb\App\Middleware\PersonMiddleware;
 use Seb\App\Controller\RedBeanController;
 use Tuupola\Middleware\JwtAuthentication;
+use Seb\App\Controller\SecurityController;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Handlers\Strategies\RequestHandler;
@@ -55,6 +57,10 @@ $container->set("dao.sale", function (ContainerInterface $c) {
 
 $container->set("dao.person", function (ContainerInterface $c) {
     return new PersonDAO($c->get("pdo"));
+});
+
+$container->set("dao.user", function (ContainerInterface $c) {
+    return new UserDAO($c->get("pdo"));
 });
 
 $app = Bridge::create($container);
@@ -120,6 +126,9 @@ $app->get("/jwt/secure", [JwtController::class, "secureSpace"])
     ->add(new JwtAuthentication([
         "secret" => $_ENV["JWT_SECRET"]
     ]));
+
+
+$app->post("/register", [SecurityController::class, "register"]);
 
 
 $app->run();

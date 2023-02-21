@@ -7,16 +7,16 @@ use Seb\App\Core\EntityInterface;
 class User implements EntityInterface
 {
 
-    private int $id;
-    private string $email;
-    private string $userName;
-    private string $userPass;
-    private string $role;
+    private ?int $id = null;
+    private ?string $email;
+    private ?string $userName;
+    private ?string $userPass = null;
+    private ?string $role;
 
     /**
      * Get the value of id
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
