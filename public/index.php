@@ -21,6 +21,8 @@ use Tuupola\Middleware\JwtAuthentication;
 use Seb\App\Controller\SecurityController;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Seb\App\Controller\SecureController;
+use Seb\App\Middleware\UserCheckMiddleware;
 use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 
@@ -130,6 +132,10 @@ $app->get("/jwt/secure", [JwtController::class, "secureSpace"])
 
 $app->post("/register", [SecurityController::class, "register"]);
 $app->post("/login", [SecurityController::class, "login"]);
+
+$app->get("/secure", [SecureController::class, "index"])
+    ->add(new UserCheckMiddleware($container))
+    ->add(new JwtAuthentication(["secret" => $_ENV["JWT_SECRET"]]));
 
 
 $app->run();
