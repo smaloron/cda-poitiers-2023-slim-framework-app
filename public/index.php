@@ -129,6 +129,7 @@ $app->get("/jwt/secure", [JwtController::class, "secureSpace"])
 
 
 $app->post("/register", [SecurityController::class, "register"]);
+$app->post("/login", [SecurityController::class, "login"]);
 
 
 $app->run();
