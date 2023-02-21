@@ -2,6 +2,7 @@
 
 namespace Seb\App\Controller;
 
+use Firebase\JWT\JWT;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Psr7\Response;
@@ -21,20 +22,28 @@ class SecurityController extends AbstractController
 
         // Hashage du mot de passe en clair
         $user->setUserPass(password_hash($postedData["password"], PASSWORD_DEFAULT));
-
+        // Enregistrement dans la BD
         $dao->save($user);
-
-        return $this->jsonResponse(
+        // Génération du token
+        $token = JWT::encode(
             [
-                "message" => "OK",
-                "parsedBody" => $postedData,
+                "iat" => time(),
+                "exp" => time() * 60 * 5,
                 "user" => [
                     "userName" => $user->getUserName(),
                     "email" => $user->getEmail(),
                     "role" => $user->getRole(),
-                    "userPass" => $user->getUserPass(),
                     "id" => $user->getId()
                 ]
+            ],
+            $_ENV["JWT_SECRET"]
+        );
+
+
+        return $this->jsonResponse(
+            [
+                "message" => "OK",
+                "token" => $token
             ],
             $response
         );
