@@ -101,8 +101,10 @@ function protectWithKey(ServerRequestInterface $request, RequestHandlerInterface
     // Si pas de clef ou clef incorrecte
     // On génère notre propre objet Response 
     $response = new Response(403);
+    //$response->withHeader("Content-Type", "application/json");
+
     $response->getBody()->write(json_encode(["message" => "Accès non autorisé"]));
-    return $response;
+    return $response->withHeader("Content-Type", "application/json");
 }
 
 $app->get("/home", [HomeController::class, "home"]);

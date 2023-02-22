@@ -12,7 +12,8 @@
     },
     "scripts": {
         "start": "php -S localhost:8000 -t public",
-        "test": "php ./vendor/bin/phpunit tests"
+        "test": "php ./vendor/bin/phpunit tests",
+        "endToEnd": "php ./vendor/bin/phpunit --color end-to-end"
     },
     "autoload": {
         "psr-4": {
