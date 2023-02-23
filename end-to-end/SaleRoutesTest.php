@@ -32,4 +32,16 @@ class SaleRoutesTest extends TestCase
         $this->assertEquals("application/json", $info["content_type"]);
         $this->assertStringContainsString('non autoris\u00e9', $output);
     }
+
+    public function testGetOneSaleById()
+    {
+        $result = $this->sendRequest("vente/1?key=123");
+        extract($result);
+        $this->assertEquals(200, $info["http_code"]);
+        $response = json_decode($output, true);
+        $this->assertIsArray($response);
+        $sale = $response["sale"];
+        $this->assertTrue(array_key_exists("id", $sale));
+        $this->assertEquals(1, $sale["id"]);
+    }
 }
