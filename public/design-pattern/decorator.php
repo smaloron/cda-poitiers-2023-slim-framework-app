@@ -82,8 +82,6 @@ class CowHerdDecorator extends TileDecorator
     }
 }
 
-
-
 $plain = new CowHerdDecorator(
     new WheatFieldDecorator(
         new Tile("plain")
