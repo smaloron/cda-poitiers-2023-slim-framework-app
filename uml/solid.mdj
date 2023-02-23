@@ -1727,7 +1727,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGGfa8NwJttiJc="
 					},
-					"name": "ClassDiagram1",
+					"name": "ISP",
 					"ownedViews": [
 						{
 							"_type": "UMLInterfaceView",
@@ -5001,7 +5001,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGGfdJED58qj2I="
 					},
-					"name": "ClassDiagram1",
+					"name": "DIP",
 					"ownedViews": [
 						{
 							"_type": "UMLClassView",
