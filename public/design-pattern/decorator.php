@@ -71,7 +71,10 @@ $plain = new CowHerdDecorator(
         new Tile("plain")
     )
 );
-echo $plain->getGold();
-echo $plain->getFood();
+echo "\n";
+echo "or = " . $plain->getGold();
+echo "\n";
+echo "nourriture = " . $plain->getFood();
+echo "\n";
 
 $mountain = new Tile("mountain");
