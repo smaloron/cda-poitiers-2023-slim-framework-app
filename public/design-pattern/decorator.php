@@ -4,6 +4,7 @@ interface TileInterface
 {
     public function getGold(): int;
     public function getFood(): int;
+    public function getName(): string;
 }
 
 class Tile implements TileInterface
@@ -26,13 +27,15 @@ class Tile implements TileInterface
     {
         return 0;
     }
+
+    public function getName(): string
+    {
+        return $this->type;
+    }
 }
 
 class TileDecorator implements TileInterface
 {
-
-
-
     public function __construct(protected TileInterface $tile)
     {
     }
@@ -46,6 +49,11 @@ class TileDecorator implements TileInterface
     {
         return $this->tile->getFood();
     }
+
+    public function getName(): string
+    {
+        return $this->tile->getName();
+    }
 }
 
 class WheatFieldDecorator extends TileDecorator
@@ -54,6 +62,11 @@ class WheatFieldDecorator extends TileDecorator
     {
         return 3 + $this->tile->getFood();
     }
+
+    public function getName(): string
+    {
+        return $this->tile->getName() . " with wheat";
+    }
 }
 
 class CowHerdDecorator extends TileDecorator
@@ -61,6 +74,11 @@ class CowHerdDecorator extends TileDecorator
     public function getFood(): int
     {
         return 4 + $this->tile->getFood();
+    }
+
+    public function getName(): string
+    {
+        return $this->tile->getName() . " with cows";
     }
 }
 
@@ -72,6 +90,7 @@ $plain = new CowHerdDecorator(
     )
 );
 echo "\n";
+echo $plain->getName() . "\n";
 echo "or = " . $plain->getGold();
 echo "\n";
 echo "nourriture = " . $plain->getFood();
